@@ -25,6 +25,8 @@ export default class Game extends Phaser.Scene {
      this.load.image("plataforma", "./assets/images/platform.png");
      this.load.image("ninja", "./assets/images/Ninja.png");
      this.load.image("triangulo", "./assets/images/Triangulo.png")
+     this.load.image("cuadrado", "./assets/images/Cuadrado.png")
+     this.load.image("rombo", "./assets/images/Rombo.png")
     }
   
     create() {
@@ -45,7 +47,11 @@ export default class Game extends Phaser.Scene {
       //agrega las formas en grupos y los aloja en variables.
       this.shapeGroup=this.physics.add.group();
       this.shapeGroup
-      .create(400,0,"triangulo");
+      .create(400,0,"triangulo")
+      this.shapeGroup
+      .create(300,0,"rombo");
+      this.shapeGroup
+      .create(320,0,"cuadrado")
       this.physics.add.collider(this.platforms, this.shapeGroup)
       this.physics.add.overlap(
         this.player, 
