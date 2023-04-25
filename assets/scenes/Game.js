@@ -1,4 +1,5 @@
 // URL to explain PHASER scene: https://rexrainbow.github.io/phaser3-rex-notes/docs/site/scene/
+import { PLAYER_MOVEMENTS } from "../../utils.js";
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -51,7 +52,7 @@ export default class Game extends Phaser.Scene {
       this.shapeGroup
       .create(300,0,"rombo");
       this.shapeGroup
-      .create(320,0,"cuadrado")
+      .create(120,0,"cuadrado")
       this.physics.add.collider(this.platforms, this.shapeGroup)
       this.physics.add.overlap(
         this.player, 
@@ -59,15 +60,28 @@ export default class Game extends Phaser.Scene {
         this.collectShape,
         null,
         this
-        )
+        );
+        this.cursors=this.input.keyboard.createCursorKeys();
 
-
+        
     };
   
     
     update() {
       // update game objects
+      if (this.cursors.left.isDown) {
+        this.player.setVelocityX(-PLAYER_MOVEMENTS.x);
+      } else if (this.cursors.right.isDown) {
+        this.player.setVelocityX(PLAYER_MOVEMENTS.x);
+      }
+      else {
+        this.player.setVelocityX(0);
+      }
+      if (this.cursors.up.isDown && this.player.body.touching.down){
+        this.player.setVelocityY(-PLAYER_MOVEMENTS.y);
+      }
     }
+    //funcion callback
     collectShape(player,shape){
       console.log("figura recolectada");
       shape.disableBody(true,true);
