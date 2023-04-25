@@ -1,5 +1,5 @@
 // URL to explain PHASER scene: https://rexrainbow.github.io/phaser3-rex-notes/docs/site/scene/
-import { PLAYER_MOVEMENTS } from "../../utils.js";
+import { PLAYER_MOVEMENTS, SHAPE_DELAY, SHAPES, TRIANGULO, CUADRADO, ROMBO} from "../../utils.js";
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -25,9 +25,9 @@ export default class Game extends Phaser.Scene {
      this.load.image("sky", "./assets/images/Cielo.png");
      this.load.image("plataforma", "./assets/images/platform.png");
      this.load.image("ninja", "./assets/images/Ninja.png");
-     this.load.image("triangulo", "./assets/images/Triangulo.png")
-     this.load.image("cuadrado", "./assets/images/Cuadrado.png")
-     this.load.image("rombo", "./assets/images/Rombo.png")
+     this.load.image(TRIANGULO, "./assets/images/Triangulo.png")
+     this.load.image(CUADRADO, "./assets/images/Cuadrado.png")
+     this.load.image(ROMBO, "./assets/images/Rombo.png")
     }
   
     create() {
@@ -47,12 +47,7 @@ export default class Game extends Phaser.Scene {
       
       //agrega las formas en grupos y los aloja en variables.
       this.shapeGroup=this.physics.add.group();
-      this.shapeGroup
-      .create(400,0,"triangulo")
-      this.shapeGroup
-      .create(300,0,"rombo");
-      this.shapeGroup
-      .create(120,0,"cuadrado")
+      
       this.physics.add.collider(this.platforms, this.shapeGroup)
       this.physics.add.overlap(
         this.player, 
@@ -63,12 +58,19 @@ export default class Game extends Phaser.Scene {
         );
         this.cursors=this.input.keyboard.createCursorKeys();
 
-        
+        //crear eventos para agregar las formas. 
+        this.time.addEvent({
+          delay:SHAPE_DELAY,
+          callback: this.addShape,
+          callbackScope: this,
+          loop: true, 
+        });
     };
   
     
     update() {
       // update game objects
+      //movimiento con teclado
       if (this.cursors.left.isDown) {
         this.player.setVelocityX(-PLAYER_MOVEMENTS.x);
       } else if (this.cursors.right.isDown) {
@@ -81,11 +83,22 @@ export default class Game extends Phaser.Scene {
         this.player.setVelocityY(-PLAYER_MOVEMENTS.y);
       }
     }
-    //funcion callback
+    //funcion callback 
     collectShape(player,shape){
       console.log("figura recolectada");
       shape.disableBody(true,true);
 
+    }
+    addShape(){
+      console.log(new Date())
+      console.log("Se Crea una figura");
+
+      //get random Shape
+    const randomShape=Phaser.Math.RND.pick(SHAPES);
+    //get random position
+    const randomX=Phaser.Math.RND.between(0,800);
+    //add shape to screen
+    this.shapeGroup.create(randomX,0,randomShape)
     }
     }
 
