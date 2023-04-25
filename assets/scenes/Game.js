@@ -9,11 +9,11 @@ export default class Game extends Phaser.Scene {
     }
   
     init() {
-      let shapesRecolected = [
-        {type: "Triangulo", count: 0},
-        {type: "Cuadrado", count: 0},
-        {type: "Rombo", count: 0}
-      ]
+      this.shapesRecolected = {
+      ["triangulo"]: {count: 0},
+      [ "cuadrado"]: {count: 0},
+      ["rombo"]: {count: 0}
+      };
       // this is called before the scene is created
       // init variables
       // take data passed from other scenes
@@ -87,11 +87,16 @@ export default class Game extends Phaser.Scene {
     collectShape(player,shape){
       console.log("figura recolectada");
       shape.disableBody(true,true);
+      const shapeName=shape.texture.key;
+    this.shapesRecolected[shapeName].count++;
+    console.log(this.shapesRecolected)
 
     }
+    
     addShape(){
       console.log(new Date())
       console.log("Se Crea una figura");
+
 
       //get random Shape
     const randomShape=Phaser.Math.RND.pick(SHAPES);
