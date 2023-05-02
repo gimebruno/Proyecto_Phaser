@@ -18,6 +18,8 @@ export default class Game extends Phaser.Scene {
       // init variables
       // take data passed from other scenes
       // data object param {}
+      this.isWinner=false;
+      this.isGameOver=false;
     }
   
     preload() {
@@ -42,10 +44,10 @@ export default class Game extends Phaser.Scene {
       .setScale(2)
       .refreshBody();
 
-      //agrega una física de colision entre dos objetos
+      //agrega una física de colision entre dos objetos o grupos
       this.physics.add.collider(this.player, this.platforms)
       
-      //agrega las formas en grupos y los aloja en variables.
+      //agrega las formas en grupos con físicas y los aloja en variables.
       this.shapeGroup=this.physics.add.group();
       
       this.physics.add.collider(this.platforms, this.shapeGroup)
@@ -56,7 +58,9 @@ export default class Game extends Phaser.Scene {
         null,
         this
         );
-        this.cursors=this.input.keyboard.createCursorKeys();
+
+        //Agrega un imput de teclado y lo aloja en una variable 
+      this.cursors=this.input.keyboard.createCursorKeys();
 
         //crear eventos para agregar las formas. 
         this.time.addEvent({
@@ -65,6 +69,17 @@ export default class Game extends Phaser.Scene {
           callbackScope: this,
           loop: true, 
         });
+      //agregar texto fijo en la pantalla
+    this.scoreText=this.add.text(16,16,"T:0 // C : 0 // R:0",{
+      fontSize: "20px",
+      fill:"#000000",
+      backgroundColor: "#ffffff",
+      fontFamily:"Georgia",
+      fontWeight:"bold",
+      
+    });
+
+    
     };
   
     
@@ -90,7 +105,30 @@ export default class Game extends Phaser.Scene {
       const shapeName=shape.texture.key;
     this.shapesRecolected[shapeName].count++;
     console.log(this.shapesRecolected)
+      this.scoreText.setText(
+        "T: "+ 
+        this.shapesRecolected[TRIANGULO].count +
+        "// C: "+
+        this.shapesRecolected[CUADRADO].count +
+        "// R: "+
+        this.shapesRecolected[ROMBO].count
+      );
+      if (
+        this.shapesRecolected[TRIANGULO].count>=2 &&
+        this.shapesRecolected[CUADRADO].count>=2 &&
+        this.shapesRecolected[ROMBO].count>=2
+      ) {
+        this.isWinner=true;
+      }
 
+      if (this.isWinner){
+        this.scene.start("Winner");
+
+      }
+      if (this.isGameOver){
+        this.scene.start("gameOver")
+      }
+      
     }
     
     addShape(){
@@ -105,6 +143,8 @@ export default class Game extends Phaser.Scene {
     //add shape to screen
     this.shapeGroup.create(randomX,0,randomShape)
     }
+
+    
     }
 
   
