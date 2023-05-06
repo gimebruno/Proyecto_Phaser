@@ -10,9 +10,9 @@ export default class Game extends Phaser.Scene {
   
     init() {
       this.shapesRecolected = {
-      ["triangulo"]: {count: 0},
-      [ "cuadrado"]: {count: 0},
-      ["rombo"]: {count: 0}
+      ["triangulo"]: {count: 0, score: 30},
+      [ "cuadrado"]: {count: 0, score: 20},
+      ["rombo"]: {count: 0, score: 40},
       };
       // this is called before the scene is created
       // init variables
@@ -20,6 +20,7 @@ export default class Game extends Phaser.Scene {
       // data object param {}
       this.isWinner=false;
       this.isGameOver=false;
+      this.timer=30;
     }
   
     preload() {
@@ -70,7 +71,7 @@ export default class Game extends Phaser.Scene {
           loop: true, 
         });
       //agregar texto fijo en la pantalla
-    this.scoreText=this.add.text(16,16,"T:0 // C : 0 // R:0",{
+    this.countText=this.add.text(16,16,"T:0 // C : 0 // R:0",{
       fontSize: "20px",
       fill:"#000000",
       backgroundColor: "#ffffff",
@@ -78,6 +79,30 @@ export default class Game extends Phaser.Scene {
       fontWeight:"bold",
       
     });
+  
+//Evento del contador
+    this.time.addEvent({
+      delay:1000,
+      callback: this.updateTimer,
+      callbackScope:this,
+      loop: true,
+    });
+    this.timerText=this.add.text(16, 40,"Timer: " + this.timer,{
+      fontSize: "20px",
+      fill:"#000000",
+      backgroundColor: "#ffffff",
+      fontFamily:"Georgia",
+      fontWeight:"bold",
+      
+    });
+    this.scoreText=this.add.text(16,65, "Score: "+ this.shapesRecolected[TRIANGULO].score, {
+      fontSize: "20px",
+      fill:"#000000",
+      backgroundColor: "#ffffff",
+      fontFamily:"Georgia",
+      fontWeight:"bold",
+
+    })
 
     
     };
@@ -125,17 +150,14 @@ export default class Game extends Phaser.Scene {
         this.scene.start("Winner");
 
       }
-      if (this.isGameOver){
-        this.scene.start("gameOver")
-      }
+      
       
     }
+    
     
     addShape(){
       console.log(new Date())
       console.log("Se Crea una figura");
-
-
       //get random Shape
     const randomShape=Phaser.Math.RND.pick(SHAPES);
     //get random position
@@ -143,7 +165,21 @@ export default class Game extends Phaser.Scene {
     //add shape to screen
     this.shapeGroup.create(randomX,0,randomShape)
     }
-
+    updateTimer(){
+      this.timer--
+      console.log(this.timer)
+      if (this.timer==0){
+        this.isGameOver=true;
+      }
+      if (this.isGameOver){
+        this.scene.start("gameOver")
+      }
+      this.timerText.setText(
+        "Timer: " + this.timer + " "
+      )
+        
+    }
+    
     
     }
 
