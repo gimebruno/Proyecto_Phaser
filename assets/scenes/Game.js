@@ -1,5 +1,5 @@
 // URL to explain PHASER scene: https://rexrainbow.github.io/phaser3-rex-notes/docs/site/scene/
-import { PLAYER_MOVEMENTS, SHAPE_DELAY, SHAPES, TRIANGULO, CUADRADO, ROMBO} from "../../utils.js";
+import { PLAYER_MOVEMENTS, SHAPE_DELAY, SHAPES, TRIANGULO, CUADRADO, ROMBO, BOMBA} from "../../utils.js";
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -7,20 +7,21 @@ export default class Game extends Phaser.Scene {
       // the key will be used to start the scene by other scenes
       super("Game");
     }
-  
-    init() {
-      this.shapesRecolected = {
-      ["triangulo"]: {count: 0, score: 30},
-      [ "cuadrado"]: {count: 0, score: 20},
-      ["rombo"]: {count: 0, score: 40},
-      };
-      // this is called before the scene is created
+     // this is called before the scene is created
       // init variables
       // take data passed from other scenes
       // data object param {}
+    init() {
+      this.shapesRecolected = {
+      ["triangulo"]: {count: 0, score: 10},
+      [ "cuadrado"]: {count: 0, score: 20},
+      ["rombo"]: {count: 0, score: 15},
+      ["bomba"]:{count: 0, score: -10},
+      };
       this.isWinner=false;
       this.isGameOver=false;
       this.timer=30;
+      this.recolect=0;
     }
   
     preload() {
@@ -31,6 +32,7 @@ export default class Game extends Phaser.Scene {
      this.load.image(TRIANGULO, "./assets/images/Triangulo.png")
      this.load.image(CUADRADO, "./assets/images/Cuadrado.png")
      this.load.image(ROMBO, "./assets/images/Rombo.png")
+     this.load.image(BOMBA, "./assets/images/bomb.png")
     }
   
     create() {
@@ -43,6 +45,9 @@ export default class Game extends Phaser.Scene {
       this.platforms
       .create(400,550,"plataforma")
       .setScale(2)
+      .refreshBody();
+      this.platforms
+      .create(250,300,"plataforma")
       .refreshBody();
 
       //agrega una física de colision entre dos objetos o grupos
@@ -95,17 +100,25 @@ export default class Game extends Phaser.Scene {
       fontWeight:"bold",
       
     });
-    this.scoreText=this.add.text(16,65, "Score: "+ this.shapesRecolected[TRIANGULO].score, {
+    //evento del recolector
+    this.time.addEvent({
+      delay:1000,
+      callback: this.updateRecolect,
+      callbackScope:this,
+      loop: true,
+    });
+    this.scoreText=this.add.text(16,65, "Score: "+ this.recolect, {
       fontSize: "20px",
       fill:"#000000",
       backgroundColor: "#ffffff",
       fontFamily:"Georgia",
       fontWeight:"bold",
 
-    })
+    });
 
     
-    };
+    }
+    ;
   
     
     update() {
@@ -130,7 +143,7 @@ export default class Game extends Phaser.Scene {
       const shapeName=shape.texture.key;
     this.shapesRecolected[shapeName].count++;
     console.log(this.shapesRecolected)
-      this.scoreText.setText(
+      this.countText.setText(
         "T: "+ 
         this.shapesRecolected[TRIANGULO].count +
         "// C: "+
@@ -155,8 +168,7 @@ export default class Game extends Phaser.Scene {
     }
     
     
-    addShape(){
-      console.log(new Date())
+ addShape(){
       console.log("Se Crea una figura");
       //get random Shape
     const randomShape=Phaser.Math.RND.pick(SHAPES);
@@ -165,7 +177,7 @@ export default class Game extends Phaser.Scene {
     //add shape to screen
     this.shapeGroup.create(randomX,0,randomShape)
     }
-    updateTimer(){
+ updateTimer(){
       this.timer--
       console.log(this.timer)
       if (this.timer==0){
@@ -179,8 +191,17 @@ export default class Game extends Phaser.Scene {
       )
         
     }
-    
-    
-    }
+  updateRecolect(){
+  this.puntosT = this.shapesRecolected[TRIANGULO].count * this.shapesRecolected[TRIANGULO].score;
+  this.puntosC = this.shapesRecolected[CUADRADO].count * this.shapesRecolected[CUADRADO].score;
+  this.puntosR = this.shapesRecolected[ROMBO].count * this.shapesRecolected[ROMBO].score;
+  this.puntosB=this.shapesRecolected[BOMBA].count*this.shapesRecolected[BOMBA].score;
+  this.score = this.puntosT + this.puntosC + this.puntosR-this.puntosB;
+  console.log("puntos " + this.score);
+  this.scoreText.setText("Score: "+ this.score,)
+  if (this.score>=100){
+    this.scene.start("Winner")
+  }
 
-  
+  };
+} ;   
