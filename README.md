@@ -1,2 +1,2 @@
-# Phaser 3 Template
-Proyecto de práctica sobre Phaser. 
+# Proyecto Phaser Ninja Moncho
+Proyecto de práctica de juego de plataformas realizado en Phaser. 
