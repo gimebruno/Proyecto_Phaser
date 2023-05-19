@@ -29,8 +29,8 @@ export default class Winner extends Phaser.Scene {
       this.add.image(400,300,"sky").setScale(0.55);
       this.music=this.sound.add("winGame")
       this.music.play({loop:true, volume: 0.5});
-      this.winText=this.add.text(400,300,"Felicitaciones, ganaste el juego! ", {
-        fontSize:"20px",
+      this.winText=this.add.text(400,300,"¡Felicitaciones! ¡Ganaste! ", {
+        fontSize:"30px",
         fontFamily:"Open Sans",
         fill: "#ffffff",
       });
@@ -38,7 +38,7 @@ export default class Winner extends Phaser.Scene {
       this.restartButton=this.add.image(400,400,"restart");
       this.restartButton.setScale(0.1)
                        .setInteractive()
-                       .on('pointerdown',()=>this.scene.start("Game"));
+                       .on('pointerdown',()=>this.scene.start("Game"), this.music.play({ loop: false}));
     }
   
     update() {

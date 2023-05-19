@@ -37,7 +37,7 @@ export default class GameOver extends Phaser.Scene {
      this.restartButton=this.add.image(400,400,"restart")
      this.restartButton.setScale(0.1)
                        .setInteractive()
-                       .on('pointerdown',()=>this.scene.start("Game"));
+                       .on('pointerdown',()=>this.scene.start("Game"), this.music.play({ loop: false}));
   
     }
   
