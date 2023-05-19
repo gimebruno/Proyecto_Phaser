@@ -1,5 +1,5 @@
 // URL to explain PHASER scene: https://rexrainbow.github.io/phaser3-rex-notes/docs/site/scene/
-import {PLAYER_MOVEMENTS, SHAPE_DELAY, SHAPES, TRIANGULO, CUADRADO, ROMBO, BOMBA,POINTS_PERCENTAGE, POINTS_PERCENTAGE_VALUE_START } from "../../utils.js";
+import {PLAYER_MOVEMENTS,SHAPE_DELAY, SHAPES, TRIANGULO, CUADRADO, ROMBO, BOMBA, POINTS_PERCENTAGE, POINTS_PERCENTAGE_VALUE_START } from "../../utils.js";
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -14,7 +14,7 @@ export default class Game extends Phaser.Scene {
     init() {
       this.shapesRecolected = {
       ["triangulo"]: {count: 0, score: 10},
-      [ "cuadrado"]: {count: 0, score: 20},
+      ["cuadrado"]: {count: 0, score: 20},
       ["rombo"]: {count: 0, score: 15},
       ["bomba"]:{count: 0, score: 10},
       };
@@ -22,6 +22,7 @@ export default class Game extends Phaser.Scene {
       this.isGameOver=false;
       this.timer=30;
       this.recolect=0;
+      
     }
   
     preload() {
@@ -29,14 +30,18 @@ export default class Game extends Phaser.Scene {
      this.load.image("sky", "./assets/images/Cielo.png");
      this.load.image("plataforma", "./assets/images/platform.png");
      this.load.image("ninja", "./assets/images/Ninja.png");
-     this.load.image(TRIANGULO, "./assets/images/Triangulo.png")
-     this.load.image(CUADRADO, "./assets/images/Cuadrado.png")
-     this.load.image(ROMBO, "./assets/images/Rombo.png")
-     this.load.image(BOMBA, "./assets/images/bomb.png")
+     this.load.image(TRIANGULO, "./assets/images/Triangulo.png");
+     this.load.image(CUADRADO, "./assets/images/Cuadrado.png");
+     this.load.image(ROMBO, "./assets/images/Rombo.png");
+     this.load.image(BOMBA, "./assets/images/bomb.png");
+     this.load.audio("music", "./assets/images/backgroundMusic.mp3");
     }
   
     create() {
       // create los objetos en el juego
+      this.music = this.sound.add("music");
+      this.music.play({ loop: true, volume: 0.5 });
+
       this.add.image(400,300,"sky")
       .setScale(0.55);
       this.player=this.physics.add.sprite(400,480,"ninja");
@@ -125,7 +130,7 @@ export default class Game extends Phaser.Scene {
 
     });
 
-    
+   
     }
     ;
   
@@ -174,13 +179,18 @@ export default class Game extends Phaser.Scene {
       }
 
       if (this.isWinner){
+        this.music.stop();
         this.scene.start("Winner");
+       
+        ;
 
       }
       
       
     }
-    reduce(shape, platform){const newPercentage = shape.getData(POINTS_PERCENTAGE) - 0.25;
+
+    reduce(shape, platform){
+      const newPercentage = shape.getData(POINTS_PERCENTAGE) - 0.25;
       console.log(shape.texture.key, newPercentage);
       shape.setData(POINTS_PERCENTAGE, newPercentage);
       if (newPercentage <= 0) {
@@ -219,7 +229,9 @@ export default class Game extends Phaser.Scene {
         this.isGameOver=true;
       }
       if (this.isGameOver){
-        this.scene.start("gameOver")
+        this.music.stop()
+        this.scene.start("gameOver");
+        
       }
       this.timerText.setText(
         "Timer: " + this.timer + " "
@@ -235,8 +247,8 @@ export default class Game extends Phaser.Scene {
   console.log("puntos " + this.recolect);
   this.scoreText.setText("Score: "+ this.recolect,)
   if (this.recolect>=100){
+    this.music.stop()
     this.scene.start("Winner")
   }
-
-  };
+ };
 } ;   
